@@ -5,6 +5,12 @@ const initialState = {
   showModal: false,
   drawerState: false,
   currentScreen: 'Home',
+  toastAlert: {
+    msg: "",
+    result: "",
+    visible:false,
+    duration : 3000, 
+  }
 };
 
 export const AppSlice = createSlice({
@@ -25,10 +31,14 @@ export const AppSlice = createSlice({
     setCurrentScreen: (state, action) => {
       state.currentScreen = action.payload;
     },
+    setToastAlert: (state, action) => {
+      state.toastAlert = action.payload;
+    },
+
   },
 });
 
-export const {setPageLoad, setModelShow, setDrawerState, setCurrentScreen} =
+export const {setPageLoad, setModelShow, setDrawerState, setCurrentScreen, setToastAlert} =
   AppSlice.actions;
 
 export default AppSlice.reducer;

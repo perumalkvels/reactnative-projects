@@ -9,11 +9,13 @@ import keyboardStatusCheck from '../CommonComponents/keyboardStatusCheck';
 import {setCurrentScreen} from '../Redux/Slices/AppSlice';
 import {setIsLogged} from '../Redux/Slices/UserSlices/userAuthSlice';
 import {useDispatch, useSelector} from 'react-redux';
+import Toast from '../CommonComponents/customToast';
 const Stack = createStackNavigator();
 
 export default function AccountStack({navigation}) {
-  // const currentScreen = useSelector(state => state.appData.currentScreen);
-  // console.log(currentScreen);
+  const {currentScreen, drawerState, toastAlert} = useSelector(state => state.appData);
+
+  const {isRegister} = useSelector(state => state.userAuth);
   const btnsArray = ['Login', 'Register'];
   const dispatch = useDispatch();
   useFocusEffect(
@@ -46,7 +48,9 @@ export default function AccountStack({navigation}) {
   }, [isKeyboardOpen, fadeAnim]);
 
   return (
+   
     <View style={style.accountContainer}>
+      {toastAlert.visible && <Toast/>}
       <Stack.Navigator
         initialRouteName="Login"
         screenOptions={{
@@ -61,7 +65,7 @@ export default function AccountStack({navigation}) {
             btnsArray={btnsArray}
             btnGpName="Account"
             navigation={navigation}
-            nowSelected={0}
+            nowSelected={isRegister ? 0 : 1 }
           />
         </View>
       </Animated.View>
@@ -70,17 +74,6 @@ export default function AccountStack({navigation}) {
 }
 const style = StyleSheet.create({
   accountContainer: {
-    // overlay: {
-    //   flex: 1,
-    //   position: 'absolute',
-    //   left: 0,
-    //   top: 0,
-    //   opacity: 0.5,
-    //   backgroundColor: 'red',
-    //   width: '100%',
-    //   height: 360,
-    //   // width: width
-    // },
     flex: 1,
   },
 });

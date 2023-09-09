@@ -2,10 +2,11 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   //Initial State Declaration
-  userInfo: {},
+  isLogged: false,
+  userInfo: null,
   cartList: [],
   orderList: [],
-  userFavList: [],
+  favList: [],
   tempFoodList: {},
 };
 
@@ -15,6 +16,9 @@ export const userDataSlice = createSlice({
 
   // Functions That may associate with Changing The Initial State
   reducers: {
+    setIsLogged: (state, action) => {
+      state.isLogged = action.payload;
+    },
     setUserInfo: (state, action) => {
       state.userInfo = action.payload;
     },
@@ -25,7 +29,7 @@ export const userDataSlice = createSlice({
       state.orderList = action.payload;
     },
     setUserFavsList: (state, action) => {
-      state.userFavList = action.payload;
+      state.favList = action.payload;
     },
     // setFilterFoodList: (state, action) => {
     //   state.filterFoodList = action.payload;
@@ -37,6 +41,7 @@ export const userDataSlice = createSlice({
 });
 
 export const {
+  setIsLogged,
   setUserInfo,
   setCartList,
   setOrderList,

@@ -4,7 +4,7 @@
  *
  * @format
  */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 //***  For Setting Redux Store  ***//
 import {store} from './Src/Redux/Store';
@@ -19,6 +19,9 @@ import Header from './Src/CommonComponents/Header';
 import DrawerContent from './Src/Navigations/DrawerContent';
 import BottomTabs from './Src/Navigations/BottomTabs';
 
+import { firebase } from '@react-native-firebase/auth';
+import  database from '@react-native-firebase/database';
+
 const Drawer = createDrawerNavigator();
 
 export function App() {
@@ -26,12 +29,6 @@ export function App() {
   // const [drawerState, setDrawerState] = useState(false);
   // console.log('currentScreenFromHCounterSliceome', currentScreen);
   // console.log('App cart Item:', cart);
-  const customProps = {
-    // currentScreen,
-    // setCurrentScreen,
-    // drawerState,
-    // setDrawerState,
-  };
 
   // const storeData = async () => {
   //   try {
@@ -44,21 +41,50 @@ export function App() {
   //   }
   // };
 
+  // database()
+  // .ref('/foodlist')
+  // .set({
+  //   name: 'peru',
+  //   age: 32,
+  // })
+  // .then(() => console.log('Data set.'));
+
+  // const reference = firebase
+  // .app()
+  // .database('https://awesomeproject-mob1-default-rtdb.firebaseio.com/')
+  // .ref('/users/123');
+
+  // useEffect(()=> {
+  //   console.log('data',reference)
+  // },[])
+
+  // useEffect(() => {
+  //   // Sign in anonymously
+  //   console.log('hi this is from firebase')
+  //   firebase.auth().signInAnonymously()
+  //     .then(({ user }) => {
+  //       console.log('User UID:', user.uid);
+  //     })
+  //     .catch(error => {
+  //       console.error('Sign-in Error:', error);
+  //     });
+  // }, []);
+
   const drawerContentFunction = props => {
-    return <DrawerContent {...props} customProps={customProps} />;
+    return <DrawerContent {...props}  />;
   };
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Header customProps={customProps} />
+        <Header  />
         <Drawer.Navigator
           drawerContent={props => drawerContentFunction(props)}
           screenOptions={{
             headerShown: false,
           }}>
           <Drawer.Screen name="BottomTabs">
-            {props => <BottomTabs {...props} customProps={customProps} />}
+            {props => <BottomTabs {...props} />}
           </Drawer.Screen>
         </Drawer.Navigator>
       </NavigationContainer>

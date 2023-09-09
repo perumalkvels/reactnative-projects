@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeStack from '../Stacks/HomeStack';
 import ProductStack from '../Stacks/ProductStack';
@@ -9,7 +9,10 @@ import OrderScreen from '../UI Screens/Order';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector, useDispatch} from 'react-redux';
 import ProfileModal from '../CommonComponents/profileModal';
-
+import { setBrandList, setFoodList } from '../Redux/Slices/ProductSlice';
+import { fbdataservice } from '../../firebaseConfig';
+import Toast from '../CommonComponents/customToast';
+// import initalAppData from '../../initalAppData';
 // import PageLoader from '../CommonComponents/pageloader';
 
 // import {useNavigation} from '@react-navigation/native';
@@ -21,10 +24,42 @@ import ProfileModal from '../CommonComponents/profileModal';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs({navigation}) {
+  const dispatch = useDispatch();
   // const pageLoad = useSelector(state => state.appData.pageLoad);
-  const {showModal} = useSelector(state => state.appData);
-  const isLogged = useSelector(state => state.userAuth.isLogged);
-  // console.log(isLogged);
+  const {showModal, toastAlert} = useSelector(state => state.appData);
+  const {isLogged,cartList,orderList,userInfo} = useSelector(state => state.userData);
+  const {foodList,brandList}= useSelector(state => state.appProducts);
+  console.log('frm btntabs',toastAlert.visible);
+  // database()
+  // .ref('/foodlist')
+  // .set({...foodList})
+  // .then(() => console.log('Data set.'));
+
+  // const reference = firebase
+  // .app()
+  // .database('https://awesomeproject-mob1-default-rtdb.firebaseio.com/')
+  // .ref('/users/123');
+  
+  // database()
+  //   .ref('/users')
+  //   .on('value', snapshot => {
+  //     console.log('User data: ', snapshot.val());
+  //     // setTemp(snapshot.val())
+  //   });
+
+  const getFBProductData = async () => {
+    const fbFoodData= await fbdataservice('/foodlist','get')
+    const fbBrandData= await fbdataservice('/brandlist','get')
+    dispatch(setBrandList(fbFoodData))
+    dispatch(setFoodList(fbBrandData))
+    setTemp(fbFoodData);
+  };
+
+  useEffect(() => {
+    if(!foodList.length){
+      getFBProductData()
+      }
+    },[foodList]);
 
   const bottomTabIconHandler = (focused, color, size, route) => {
     let iconName =
@@ -95,6 +130,9 @@ export default function BottomTabs({navigation}) {
     </>
   );
 }
+
+// fbdataservice('/foodlist','set', {...initalAppData.initFoodList})
+// fbdataservice('/brandlist','set', {...initalAppData.initbrandList})
 
 // if (route.name === 'Home') {
 //   iconName = 'home';

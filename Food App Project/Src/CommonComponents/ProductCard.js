@@ -1,24 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View, StyleSheet, Button, Image, Pressable} from 'react-native';
-
-import {FlatList} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   setCartList,
   setUserFavsList,
 } from '../Redux/Slices/UserSlices/userDataSlice';
+import { fbdataservice } from '../../firebaseConfig'; 
+import database from '@react-native-firebase/database';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const ProductCard = ({foodList}) => {
+const ProductCard = ({item}) => {                                                                                               
   const dispatch = useDispatch();
-
-  // const BrandList = useSelector(state => state.brandList.brandList);
-  const {cartList, userFavList} = useSelector(state => state.userData);
-  console.log(userFavList);
-  useEffect(() => {
-    // console.log('cart : ', cartList);
-  }, [cartList]);
+  const {cartList, favList : userFavList} = useSelector(state => state.userData);
 
   const toggleFavorite = (id, isFav) => {
     dispatch(
@@ -29,110 +23,64 @@ const ProductCard = ({foodList}) => {
       ),
     );
   };
+  const isFavorite = userFavList.includes(item.foodId);
 
   return (
     <>
-      <View style={Styles.cardWrapper}>
-        <FlatList
-          data={foodList}
-          renderItem={({item}) => {
-            // console.log('item ID', item.foodId);
-            // console.log('cond', );
-            const isFavorite = userFavList.includes(item.foodId);
-            return (
-              <View style={Styles.productCard}>
-                <View style={Styles.favoriteContainer}>
-                  <Pressable
-                    onPress={() => toggleFavorite(item.foodId, isFavorite)}>
-                    <Icon
-                      name={isFavorite ? 'heart' : 'heart-o'}
-                      size={20}
-                      color={isFavorite ? '#a61900' : 'gray'}
-                    />
-                  </Pressable>
-                </View>
-                {/* {userFavList.includes(item.foodId) ? (
-                    <>
-                      <Pressable onPress={console.log('inFav', true)}>
-                        <Icon name={'heart'} size={20} color={'red'} />
-                      </Pressable>
-                    </>
-                  ) : (
-                    <>
-                      <Pressable onPress={console.log('inFav', false)}>
-                        <Icon name={'heart-o'} size={20} color={'gray'} />
-                      </Pressable>
-                    </>
-                  )}
-                 */}
-                <Text style={Styles.title} numberOfLines={1}>
-                  {item.foodTitle}
-                </Text>
-                <Image style={Styles.productImg} source={{uri: item.foodImg}} />
-                <Text style={Styles.desc} numberOfLines={3}>
-                  {item.foodDes}
-                </Text>
-                <Text style={Styles.foodType}>{item.foodType}</Text>
-                <Text style={Styles.foodPrice}>Rs {item.foodPrice} /-</Text>
-                {/* {console.log(
-                  'check Item In cart',
-                  cartList.some(cartItem => cartItem.foodId === item.foodId),
-                )} */}
-                {cartList.some(cartItem => cartItem.foodId === item.foodId) ? (
-                  <Pressable
-                    onPress={() => {
-                      dispatch(
-                        setCartList(cartList.filter(val => item !== val)),
-                      );
-                    }}
-                    style={[Styles.button, Styles.removeCartItemButton]}>
-                    <Text style={Styles.buttonText}>In Cart </Text>
-                  </Pressable>
-                ) : (
-                  <Pressable
-                    onPress={() => {
-                      dispatch(
-                        setCartList([
-                          ...cartList,
-                          {...item, foodQty: 1, addedTime: new Date()},
-                        ]),
-                      );
-                    }}
-                    style={[Styles.button, Styles.addCartItemButton]}>
-                    <Text style={Styles.buttonText}>Add To Cart</Text>
-                  </Pressable>
-                )}
-              </View>
+        <View style={Styles.favoriteContainer}>
+            <Pressable
+                onPress={() => toggleFavorite(item.foodId, isFavorite)}>
+                <Icon
+                name={isFavorite ? 'heart' : 'heart-o'}
+                size={20}
+                color={isFavorite ? '#a61900' : 'gray'}
+                />
+            </Pressable>
+        </View>
+        <Text style={Styles.title} numberOfLines={1}>
+         {item.foodTitle}
+        </Text>
+        <Image style={Styles.productImg} source={{uri: item.foodImg}} />
+        <Text style={Styles.desc} numberOfLines={3}>
+        {item.foodDes}
+        </Text>
+        <Text style={Styles.foodType}>{item.foodType}</Text>
+        <Text style={Styles.foodPrice}>Rs {item.foodPrice} /-</Text>
+        {/* {console.log(
+        'check Item In cart',
+        cartList.some(cartItem => cartItem.foodId === item.foodId),
+        )} */}
+        {cartList.some(cartItem => cartItem.foodId === item.foodId) ? (
+        <Pressable
+            onPress={() => {
+            dispatch(
+                setCartList(cartList.filter(val => item !== val)),
             );
-          }}
-          horizontal={true}
-          keyExtractor={item => item.id}
-        />
-      </View>
+            }}
+            style={[Styles.button, Styles.removeCartItemButton]}>
+            <Text style={Styles.buttonText}>In Cart </Text>
+        </Pressable>
+        ) : (
+        <Pressable
+            onPress={() => {
+            dispatch(
+                setCartList([
+                ...cartList,
+                {...item, foodQty: 1, addedTime: new Date()},
+                ]),
+            );
+            }}
+            style={[Styles.button, Styles.addCartItemButton]}>
+            <Text style={Styles.buttonText}>Add To Cart</Text>
+        </Pressable>
+        )}                   
     </>
   );
 };
 export default ProductCard;
 
 const Styles = StyleSheet.create({
-  cardWrapper: {
-    flexDirection: 'row',
-    padding: 10,
-  },
-  productCard: {
-    width: 160,
-    height: 290,
-    borderRadius: 10,
-    shadowColor: 'black',
-    shadowOpacity: 40,
-    alignContent: 'center',
-    marginVertical: 10,
-    marginHorizontal: 5,
-    padding: 10,
-    backgroundColor: 'white',
-  },
   productImg: {
-    width: 140,
     height: 100,
   },
   title: {
@@ -194,3 +142,35 @@ const Styles = StyleSheet.create({
     right: 15,
   },
 });
+
+  // useEffect(() => {
+  //   database()
+  //   .ref('/users/123')
+  //   .on('value', snapshot => {
+  //     console.log('User data: ', snapshot.val());
+  //   });
+  // }, [cartList]);
+
+  //   useEffect(() => {
+  //   database()
+  //   .ref('/users')
+  //   .on('value', snapshot => {
+  //     console.log('User data: ', snapshot.val());
+  //   });
+  //    fbdataservice
+  // }, []);
+
+{/* {userFavList.includes(item.foodId) ? (
+            <>
+            <Pressable onPress={console.log('inFav', true)}>
+                <Icon name={'heart'} size={20} color={'red'} />
+            </Pressable>
+            </>
+        ) : (
+            <>
+            <Pressable onPress={console.log('inFav', false)}>
+                <Icon name={'heart-o'} size={20} color={'gray'} />
+            </Pressable>
+            </>
+        )}
+*/}

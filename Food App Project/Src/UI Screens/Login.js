@@ -11,9 +11,10 @@ import {
   Pressable,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {useRoute} from '@react-navigation/native';
+// import {useRoute} from '@react-navigation/native';
 import LogoContainer from '../CommonComponents/logoContainer';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Toast from '../CommonComponents/customToast';
 import {
   setLoginData,
   loginUser,
@@ -22,17 +23,8 @@ import {
 export default function LoginScreen({isLogged, setIsLogged, navigation}) {
   const dispatch = useDispatch();
   const loginData = useSelector(state => state.userAuth.loginData);
-  // console.log(' login Data ', loginData);
+  const {currentScreen, drawerState, toastAlert} = useSelector(state => state.appData);
 
-  // const presshandler = navigation => {
-  //   if (username === 'peru' && password === 'peru123') {
-  //     Alert.alert('Successfully Login');
-  //     setIsLogged(true);
-  //     navigation.navigate();
-  //   } else {
-  //     Alert.alert('Please Check Your Username And Password');
-  //   }
-  // };
   const updateLoginData = (key, value) => {
     const updatedLoginData = {...loginData, [key]: value};
     dispatch(setLoginData(updatedLoginData));
@@ -59,11 +51,11 @@ export default function LoginScreen({isLogged, setIsLogged, navigation}) {
             // keyboardType="password"
             secureTextEntry={true}
           />
-          <Pressable
+          <TouchableOpacity
             style={styles.button}
             onPress={() => dispatch(loginUser(loginData))}>
             <Text style={styles.text}>Login</Text>
-          </Pressable>
+          </TouchableOpacity>
           <Text
             style={styles.textS6}
             onPress={() => navigation.navigate('Register')}>
@@ -79,7 +71,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
+    justifyContent: 'center',
   },
   inputContainer: {
     marginTop: 70,

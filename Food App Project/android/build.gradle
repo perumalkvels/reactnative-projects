@@ -15,7 +15,39 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        classpath 'com.google.gms:google-services:4.3.15'
         classpath("com.android.tools.build:gradle:7.3.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
+    }
+}
+
+project.ext {
+    set('react-native', [
+        versions: [
+            // Overriding Build/Android SDK Versions
+            android: [
+                minSdk: 21,
+                targetSdk: 33,
+                compileSdk: 33,
+            ],
+
+            // Overriding Library SDK Versions
+            firebase: [
+                // Override Firebase SDK Version
+                bom: "32.1.0"
+            ],
+        ],
+    ])
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            // All of React Native (JS, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
+        }
+        google()
     }
 }

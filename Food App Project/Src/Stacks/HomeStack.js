@@ -7,13 +7,15 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
 import {StyleSheet, View} from 'react-native';
 import {setCurrentScreen} from '../Redux/Slices/AppSlice';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+
 // import {useSelector} from 'react-redux';
 
 const Stack = createStackNavigator();
 
 export default function HomeStack() {
   // const currentScreen = useSelector(state => state.appData.currentScreen);
+
   const dispatch = useDispatch();
   useFocusEffect(
     React.useCallback(() => {

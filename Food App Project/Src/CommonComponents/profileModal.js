@@ -6,6 +6,7 @@ import {Avatar} from '@rneui/themed';
 const ProfileModal = ({modalVisible, setModalVisible}) => {
   const dispatch = useDispatch();
   const showModal = useSelector(state => state.appData.showModal);
+  const {userInfo} = useSelector(state => state.userData);
   // console.log('showModela', showModal);
   // useEffect(() => {
   //   setModalVisible(props);
@@ -21,7 +22,7 @@ const ProfileModal = ({modalVisible, setModalVisible}) => {
         visible={modalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
+          dispatch(setModalVisible(!modalVisible));
         }}>
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
@@ -32,12 +33,18 @@ const ProfileModal = ({modalVisible, setModalVisible}) => {
                 onPress={() => dispatch(setModelShow(!showModal))}>
                 <Text style={styles.textStyle}>Exit</Text>
               </Pressable>
-              <Avatar
-                size={200}
-                style={styles.userIcon}
-                rounded
-                source={require('../assets/images/user.jpeg')}
-              />
+              {!userInfo.img ? (
+                  <Text  style={header.userIcon}>
+                    {userInfo.charAt(0)} 
+                  </Text>
+                 
+                 ) : ( <Avatar
+                      size={64}
+                      style={header.userIcon}
+                      rounded
+                      source={require('../assets/images/user.jpeg')}
+                  />)
+                } 
             </View>
             <View style={styles.bodyPartition}>
               <View style={styles.btnsContainer}>

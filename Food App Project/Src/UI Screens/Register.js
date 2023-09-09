@@ -7,6 +7,7 @@ import {
   View,
   Pressable,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import LogoContainer from '../CommonComponents/logoContainer';
@@ -25,58 +26,67 @@ export default function RegisterScreen({navigation}) {
   };
 
   return (
-    <KeyboardAwareScrollView>
-      <View style={styles.container}>
-        <LogoContainer />
-        <Text style={styles.textS1}>Register</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => updateRegisterData('email', text)}
-            value={registerData.email}
-            placeholder="Enter Your Email"
-            placeholderTextColor="#784646"
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={text => updateRegisterData('password', text)}
-            value={registerData.password}
-            placeholder="Enter Your Password"
-            // keyboardType="password"
-            secureTextEntry={true}
-            placeholderTextColor="#784646"
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={text => updateRegisterData('confirmPassword', text)}
-            value={registerData.confirmPassword}
-            placeholder="Confirm Your Password"
-            // keyboardType="password"
-            secureTextEntry={true}
-            placeholderTextColor="#784646"
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={text => updateRegisterData('mobileno', text)}
-            value={registerData.mobileno}
-            placeholder="Enter Your PhoneNo"
-            keyboardType="numeric"
-            placeholderTextColor="#784646"
-          />
+    <ScrollView>
+      <KeyboardAwareScrollView>
+        <View style={styles.container}>
+          <LogoContainer />
+          <Text style={styles.textS1}>Register</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              onChangeText={text => updateRegisterData('userName', text)}
+              value={registerData.userName}
+              placeholder="Enter Your UserName"
+              placeholderTextColor="#784646"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={email => updateRegisterData('email', email)}
+              value={registerData.email}
+              placeholder="Enter Your Email"
+              placeholderTextColor="#784646"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={password => updateRegisterData('password', password)}
+              value={registerData.password}
+              placeholder="Enter Your Password"
+              // keyboardType="password"
+              secureTextEntry={true}
+              placeholderTextColor="#784646"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={password => updateRegisterData('confirmPassword', password)}
+              value={registerData.confirmPassword}
+              placeholder="Confirm Your Password"
+              // keyboardType="password"
+              secureTextEntry={true}
+              placeholderTextColor="#784646"
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={Number => updateRegisterData('mobileno', Number)}
+              value={registerData.mobileno}
+              placeholder="Enter Your PhoneNo"
+              keyboardType="numeric"
+              placeholderTextColor="#784646"
+            />
 
-          <Pressable
-            style={styles.button}
-            onPress={() => dispatch(registerUser(registerData))}>
-            <Text style={styles.text}>Register</Text>
-          </Pressable>
-          <Text
-            style={styles.textS6}
-            onPress={() => navigation.navigate('Login')}>
-            Already have an Account ?
-          </Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => dispatch(registerUser(registerData))}>
+              <Text style={styles.text}>Register</Text>
+            </TouchableOpacity>
+            <Text
+              style={styles.textS6}
+              onPress={() => navigation.navigate('Login')}>
+              Already have an Account ?
+            </Text>
+          </View>
         </View>
-      </View>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </ScrollView>
   );
 }
 
@@ -84,6 +94,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    marginBottom: 100,
     // justifyContent: 'center',
   },
   inputContainer: {

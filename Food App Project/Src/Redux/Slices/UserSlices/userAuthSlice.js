@@ -1,13 +1,12 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {setCartList} from '../UserSlices/userDataSlice';
-import {setOrdersList} from '../UserSlices/userDataSlice';
-import {setUserInfo} from '../UserSlices/userDataSlice';
+import {setCartList,setUserInfo,setIsLogged,setOrdersList,setUserFavsList} from '../UserSlices/userDataSlice';
+import auth from '@react-native-firebase/auth';
+// import { firebase } from '@react-native-firebase/app';
+import { fbdataservice } from '../../../../firebaseConfig';
 // import axios from 'axios';
 
 const initialState = {
   //Initial State Declaration
-
-  isLogged: true,
 
   isRegistered: false,
 
@@ -22,14 +21,8 @@ export const userAuthSlice = createSlice({
   initialState,
 
   reducers: {
-    setIsLogged: (state, action) => {
-      state.isLogged = action.payload;
-    },
-    setLoginData: (state, action) => {
+    setLoginData:  (state, action) => {
       state.loginData = action.payload;
-    },
-    setIsRegistered: (state, action) => {
-      state.isRegistered = action.payload;
     },
     setRegisterData: (state, action) => {
       state.registerData = action.payload;
@@ -38,51 +31,65 @@ export const userAuthSlice = createSlice({
 });
 
 export const loginUser = logindata => async dispatch => {
-  console.log('yes login processed', logindata);
-  //   const {data} = await axios.post(
-  //     'http://localhost:4000/loginUser',
-  //     JSON.stringify(logindata),
-  //   );
-  // //   console.log(data);
-  //   if (!data == '') {
-  //     dispatch(setIsLogged(true));
-  //     dispatch(setUserData(data[0]));
-  //     dispatch(setCartList(data[0].cart_Items));
+  const {email, password} = logindata;
+  console.log(email, password);
+    auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(async ({user}) => {
 
-  //     alert('Login Successsfully');
-  //   } else {
-  //     alert('Login Failed');
-  //   }
+            console.log('signed in successfully!');
+            const userData = await fbdataservice(`/userData/${user.uid}`,'get')
+            const { userName, email, mobileno } = userData;
+            dispatch(setUserInfo({'uid':user.uid,'userName':userName,'email':email,'mobile':mobileno}))
+            userData.hasOwnProperty('favList') && dispatch(setUserFavsList(user.favList))
+            userData.hasOwnProperty('cartList') && dispatch(setCartList(user.cartList))
+            userData.hasOwnProperty('orderList') && dispatch(setCartList(user.orderList))
+            console.log("all ok")
+            dispatch(setIsLogged(true))
+
+      })
+    .catch(error => {
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('That email address is already in use!');
+      }
+  
+      if (error.code === 'auth/invalid-email') {
+        console.log('That email address is invalid!');
+      }
+  
+      console.error(error);
+    });
 };
 
-export const registerUser = registerdata => async dispatch => {
-  const {email, password, confirmPassword, mobileno} = registerdata;
-
+export const registerUser =  registerdata => async dispatch => {
+  const {userName, email, password, confirmPassword, mobileno} = registerdata;
   if (password === confirmPassword) {
-    console.log('yes Register processed', registerdata);
-  } else {
+        await auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(({user}) => {
+          fbdataservice(`/userData/${user.uid}`,'set', {'userName': userName, 'email' : email,'mobileno': mobileno })
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+          }
+      
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+          }
+      
+          console.error(error);
+        });
+     
+        } else {
+
     console.log('Password Doesn"t Match ');
   }
-  //   const response = await axios.post(
-  //     'http://localhost:4000/registerUser',
-  //     JSON.stringify(registerdata),
-  //   );
-
-  //   console.log(response);
-
-  // alert('Successfuly Registered');
-
-  // dispatch(setIsRegistered(true))
-
-  // dispatch(setRegisterData({request : 'create_candidate'}))
 };
 
 export const {
-  setUserData,
-  setIsLogged,
   setLoginData,
   setRegisterData,
-  setIsRegistered,
 } = userAuthSlice.actions;
 
 export default userAuthSlice.reducer;

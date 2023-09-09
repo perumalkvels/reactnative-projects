@@ -1,17 +1,20 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {Component} from 'react';
+import React from 'react';
+import CommonBrandPage from '../CommonComponents/CommonBrandPage';
+import {useFocusEffect} from '@react-navigation/native';
 
-export default class McDonald extends Component {
-  render() {
-    return (
-      <View>
-        <Text style={styles.red}>McDonald</Text>
-      </View>
-    );
-  }
+export default function McDonaldsScreen({route}) {
+  const {BrandList,foodList,setCurPrdScreen} = route.params;
+  const [ McDonaldBrandData ] = BrandList.filter(item => item.brandName === 'McDonald');
+  const McDonaldFoodList = [...foodList.filter(item => item.foodBrand === 'McDonald')];
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setCurPrdScreen('McDonald');
+    }, []),
+  );
+
+  return (
+    <CommonBrandPage brandName={'McDonald'} brandData={McDonaldBrandData} foodData={McDonaldFoodList}/>
+  );
 }
-const styles = StyleSheet.create({
-  red: {
-    color: 'red',
-  },
-});
+

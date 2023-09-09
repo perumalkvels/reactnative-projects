@@ -1,21 +1,40 @@
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {DrawerActions} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
 import {Avatar} from '@rneui/themed';
 // import ProfileModal from './profileModal';
 import {useSelector, useDispatch} from 'react-redux';
 import {setModelShow, setDrawerState} from '../Redux/Slices/AppSlice';
-
+import { fbdataservice } from '../../firebaseConfig'; 
 export default function Header() {
-  // const {currentScreen, drawerState, setDrawerState} = customProps;
-  const isLogged = useSelector(state => state.userAuth.isLogged);
-  const {currentScreen, drawerState} = useSelector(state => state.appData);
-  // const [modalVisible, setModalVisible] = useState(false);
 
+  const {isLogged,userInfo,cartList,orderList,favList} = useSelector(state => state.userData);
+  const {currentScreen, drawerState, toastAlert} = useSelector(state => state.appData);
+  console.log('isLogged',isLogged);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const showModal = useSelector(state => state.appData.showModal);
+
+  // this useEffect update to firebase when cartList is updated...
+  useEffect(() => {
+    if (isLogged) {
+      cartList.length ? 
+        fbdataservice(`/userData/${userInfo?.uid}/cartList`,'set', {...cartList})
+        :
+        fbdataservice(`/userData/${userInfo?.uid}/cartList`,'remove')
+        }
+  }, [cartList, isLogged]);
+
+  // this useEffect update to firebase when favList is updated...
+  useEffect(() => {
+    if (isLogged) {
+      favList.length ? 
+      fbdataservice(`/userData/${userInfo?.uid}/favList`,'set', {...favList})
+      :
+      fbdataservice(`/userData/${userInfo?.uid}/favList`,'remove')
+    }
+  }, [favList, isLogged]);
 
   useEffect(() => {
     drawerState
@@ -29,6 +48,7 @@ export default function Header() {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       /> */}
+      
       <View style={header.area}>
         <View style={header.contents}>
           <View style={header.toggleMenu}>
@@ -64,12 +84,18 @@ export default function Header() {
               <TouchableOpacity
                 style={header.pressableContainer}
                 onPress={() => dispatch(setModelShow(!showModal))}>
-                <Avatar
-                  size={64}
-                  style={header.userIcon}
-                  rounded
-                  source={require('../assets/images/user.jpeg')}
-                />
+                {!userInfo.img ? (
+                  <Text  style={header.userIcon}>
+                    {userInfo.charAt(0)} 
+                  </Text>
+                 
+                 ) : ( <Avatar
+                      size={64}
+                      style={header.userIcon}
+                      rounded
+                      source={require('../assets/images/user.jpeg')}
+                  />)
+                } 
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
@@ -80,7 +106,6 @@ export default function Header() {
                 <Text style={[header.text, header.authState]}>Login</Text>
               </TouchableOpacity>
             )}
-            {/* </Pressable> */}
           </View>
         </View>
       </View>

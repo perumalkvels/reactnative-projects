@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {ButtonGroup} from '@rneui/themed';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, BackHandler, Alert} from 'react-native';
 import keyboardStatusCheck from './keyboardStatusCheck';
 
 export default function ProductStack({
+  curPrdScreen,
   navigation,
   btnGpName,
   btnsArray,
@@ -16,6 +17,32 @@ export default function ProductStack({
   useEffect(() => {
     handleBtnGroup(nowSelected);
   }, [nowSelected]);
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+  // useEffect(() => {
+  //   console.log('curPrdScreen',curPrdScreen);
+  //   setSelectedIndex(btnsArray.indexOf(curPrdScreen))
+  //   navigation.navigate(curPrdScreen);
+  // }, [curPrdScreen]);
 
   const handleBtnGroup = btnIndex => {
     setSelectedIndex(btnIndex);

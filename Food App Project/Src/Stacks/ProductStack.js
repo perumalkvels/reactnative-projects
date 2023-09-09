@@ -13,15 +13,21 @@ import McDonaldsScreen from '../UI Screens/McDonald';
 import PizzaHutScreen from '../UI Screens/PizzaHut';
 import ButtonGroup from '../CommonComponents/ButtonGroup';
 import {useDispatch, useSelector} from 'react-redux';
-
+import Toast from '../CommonComponents/customToast';
 const Stack = createStackNavigator();
 
 export default function ProductStack({navigation, route}) {
   const btnsArray = ['All', 'KFC', 'McDonald', 'PizzaHut'];
+  const [curPrdScreen, setCurPrdScreen] = useState('');
   const dispatch = useDispatch();
   const {params: selectedScreen} = route;
   const [curSelected, setCurSelectedScreen] = useState('All');
+  const {currentScreen, drawerState, toastAlert} = useSelector(state => state.appData);
   const [prevScreen, setPrevScreen] = useState(null);
+  const BrandList = useSelector(state => state.brandList.brandList);
+  const foodList = useSelector(state => state.foodList.foodList);
+  // console.log('sdsdsdsdsd',curPrdScreen);
+  // console.log(BrandList,foodList);
   // console.log('curSelected', curSelected);
   // console.log('prevScreen', prevScreen);
 
@@ -49,6 +55,7 @@ export default function ProductStack({navigation, route}) {
   const btnGroupHandler = useMemo(() => {
     return (
       <ButtonGroup
+        curPrdScreen={curPrdScreen}
         btnsArray={btnsArray}
         btnGpName="Product"
         navigation={navigation}
@@ -59,27 +66,32 @@ export default function ProductStack({navigation, route}) {
 
   return (
     <View style={product.productWrapper}>
+      {toastAlert.visible && <Toast/>}
       <View style={{flex: 1}}>
         <Stack.Navigator
           initialRouteName={curSelected}
           screenOptions={{
             headerShown: false,
           }}>
-          <Stack.Screen name="All" component={AllProductScreen} />
+          <Stack.Screen 
+            name="All" 
+            component={AllProductScreen} 
+            initialParams={{BrandList, foodList, setCurPrdScreen}}
+          />
           <Stack.Screen
             name="KFC"
             component={KFCScreen}
-            // initialParams={{brand_data, food_data, cart, setCartList}}
+            initialParams={{BrandList, foodList, setCurPrdScreen}}
           />
           <Stack.Screen
             name="McDonald"
             component={McDonaldsScreen}
-            // initialParams={{brand_data, food_data, cart, setCartList}}
+            initialParams={{BrandList, foodList, setCurPrdScreen}}
           />
           <Stack.Screen
             name="PizzaHut"
             component={PizzaHutScreen}
-            // initialParams={{brand_data, food_data, cart, setCartList}}
+            initialParams={{BrandList, foodList, setCurPrdScreen}}
           />
         </Stack.Navigator>
       </View>

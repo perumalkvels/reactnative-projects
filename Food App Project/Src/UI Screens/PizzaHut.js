@@ -1,17 +1,17 @@
-import {StyleSheet,Text, View} from 'react-native';
-import React, {Component} from 'react';
+import React from 'react';
+import CommonBrandPage from '../CommonComponents/CommonBrandPage';
+import {useFocusEffect} from '@react-navigation/native';
 
-export default class PizzaHut extends Component {
-  render() {
-    return (
-      <View>
-        <Text style={styles.red}>PizzaHut</Text>
-      </View>
-    );
-  }
+export default function PizzaHutScreen({route}) {
+  const {BrandList,foodList,setCurPrdScreen} = route.params;
+  const [ PizzaHutBrandData ] = BrandList.filter(item => item.brandName === 'PizzaHut');
+  const PizzaHutFoodList = [...foodList.filter(item => item.foodBrand === 'PizzaHut')];
+  useFocusEffect(
+    React.useCallback(() => {
+      setCurPrdScreen('PizzaHut');
+    }, []),
+  );
+  return (
+    <CommonBrandPage  brandName={'PizzaHut'} brandData={PizzaHutBrandData} foodData={PizzaHutFoodList}/>
+  );
 }
-const styles = StyleSheet.create({
-  red: {
-    color: 'red',
-  },
-});

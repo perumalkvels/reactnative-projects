@@ -1,9 +1,16 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View,Text, StyleSheet} from 'react-native';
 
 const OrderScreen = ({customScreenProps, navigation}) => {
 
-  return <View>This is From OrderScreen</View>;
+  return <Text style={order.text}>This is From OrderScreen</Text>;
 };
 
 export default OrderScreen;
+
+
+const order = StyleSheet.create({
+  text : {
+    color : 'red',
+  }
+})
